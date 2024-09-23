@@ -1,0 +1,233 @@
+openapi: 3.0.0
+info:
+  title: Cliente API
+  description: API para manejar autenticación, cuentas y transferencias de clientes
+  version: 1.0.0
+
+paths:
+  /auth/register/:
+    post:
+      summary: Registro de nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  example: "Juan"
+                telefono:
+                  type: string
+                  example: "123456789"
+      responses:
+        '201':
+          description: Usuario registrado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+        '409':
+          description: Conflicto, ya existe un usuario con ese teléfono
+
+  /auth/login/:
+    post:
+      summary: Inicio de sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                telefono:
+                  type: string
+                  example: "123456789"
+      responses:
+        '200':
+          description: Inicio de sesión exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+        '400':
+          description: Solicitud incorrecta, no existe un usuario con ese teléfono
+
+  /cuenta/{id}/saldo:
+    get:
+      summary: Consulta el saldo de la cuenta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Saldo consultado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  saldo:
+                    type: number
+                    example: 1500.50
+
+  /cliente/:
+    get:
+      summary: Consulta saldo del remitente
+      parameters:
+        - name: remitente_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: destinatario_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Consulta de saldo exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  saldo_remitente:
+                    type: number
+                    example: 500.50
+        '404':
+          description: Usuario no encontrado
+
+  /cliente/{remitente_id}/monto:
+    put:
+      summary: Transferencia de monto a otro usuario
+      parameters:
+        - name: remitente_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                destinatario_id:
+                  type: integer
+                  example: 2
+                monto:
+                  type: number
+                  example: 100.00
+      responses:
+        '200':
+          description: Transferencia realizada con éxito
+
+  /personas/nombre:
+    get:
+      summary: Obtener nombres de destinatarios por ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+      responses:
+        '200':
+          description: Nombres de destinatarios obtenidos con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    nombre_destinatario:
+                      type: string
+                      example: "Juan"
+
+  /tiendas/nombre:
+    get:
+      summary: Obtener nombres de tiendas por ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  tienda_id:
+                    type: integer
+                    example: 1
+      responses:
+        '200':
+          description: Nombres de tiendas obtenidos con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tienda_id:
+                      type: integer
+                      example: 1
+                    nombre_tienda:
+                      type: string
+                      example: "Tienda A"
+        '404':
+          description: No se encontró ninguna tienda
+
+  /tienda/{tienda_id}/nombre:
+    get:
+      summary: Obtener nombre de una tienda por ID
+      parameters:
+        - name: tienda_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Nombre de la tienda obtenido con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nombre_tienda:
+                    type: string
+                    example: "Tienda A"
+        '404':
+          description: No se encontró la tienda
+
