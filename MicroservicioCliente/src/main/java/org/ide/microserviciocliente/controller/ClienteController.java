@@ -22,7 +22,7 @@ public class ClienteController {
     private ClienteService clienteService;
 
     // Registrar un cliente nuevo
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<Long> register(@RequestBody RegisterRequestDto request) {
         try {
             Cliente cliente = clienteService.registerCliente(request);
@@ -33,7 +33,7 @@ public class ClienteController {
     }
 
     // Iniciar sesión con número de teléfono
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<Long> login(@RequestBody LoginRequestDto request) {
         return clienteService.loginCliente(request)
                 .map(cliente -> ResponseEntity.ok().body(cliente.getId()))
