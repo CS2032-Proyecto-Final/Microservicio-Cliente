@@ -13,6 +13,7 @@ import org.ide.microserviciocliente.repository.TiendaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,14 +42,18 @@ public class ClienteService {
         Cliente cliente = new Cliente();
         cliente.setNombre(request.getNombre());
 
+        // Crear y asociar la cuenta a la lista de cuentas del cliente
         Cuenta cuenta = new Cuenta();
         cuenta.setSaldo(0.0);
         cuenta.setCliente(cliente);
 
-        cliente.setCuenta(cuenta);
+        // Inicializar la lista de cuentas y agregar la cuenta creada
+        cliente.setCuenta(Collections.singletonList(cuenta));
 
+        // Guardar el cliente con la lista de cuentas asociadas
         cliente = clienteRepository.save(cliente);
 
+        // Crear la persona asociada al cliente
         Persona persona = new Persona();
         persona.setCliente(cliente);
         persona.setTelefono(request.getTelefono());
@@ -77,15 +82,21 @@ public class ClienteService {
         Cliente destinatario = clienteRepository.findById(destinatario_id)
                 .orElseThrow(() -> new RuntimeException("Destinatario no encontrado"));
 
-        if (remitente.getCuenta().getSaldo() < monto) {
+        // Supongamos que cada cliente solo tiene una cuenta para simplificar
+        Cuenta cuentaRemitente = remitente.getCuenta().get(0);
+        Cuenta cuentaDestinatario = destinatario.getCuenta().get(0);
+
+        if (cuentaRemitente.getSaldo() < monto) {
             throw new RuntimeException("Saldo insuficiente");
         }
 
-        remitente.getCuenta().setSaldo(remitente.getCuenta().getSaldo() - monto);
-        destinatario.getCuenta().setSaldo(destinatario.getCuenta().getSaldo() + monto);
+        // Ajustar los saldos de ambas cuentas
+        cuentaRemitente.setSaldo(cuentaRemitente.getSaldo() - monto);
+        cuentaDestinatario.setSaldo(cuentaDestinatario.getSaldo() + monto);
 
-        clienteRepository.save(remitente);
-        clienteRepository.save(destinatario);
+        // Guardar los cambios
+        cuentaRepository.save(cuentaRemitente);
+        cuentaRepository.save(cuentaDestinatario);
     }
 
     public List<String> getPersonasNombres(List<Long> ids) {
@@ -105,3 +116,5 @@ public class ClienteService {
                 .map(tienda -> tienda.getCliente().getNombre());
     }
 }
+
+// yo lo corrijo
