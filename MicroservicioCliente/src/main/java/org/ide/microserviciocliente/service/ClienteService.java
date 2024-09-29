@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -102,16 +103,28 @@ public class ClienteService {
         cuentaRepository.save(cuentaDestinatario);
     }
 
-    public List<String> getPersonasNombres(List<Long> ids) {
+    // Obtener los nombres de las personas con sus ids
+    public List<Map<String, Object>> getPersonasNombres(List<Long> ids) {
         return personaRepository.findAllById(ids).stream()
-                .map(persona -> persona.getCliente().getNombre())
+                .map(persona -> Map.<String, Object>of(
+                        "id", persona.getId(),
+                        "nombre_destinatario", persona.getCliente().getNombre()  // Obtener el nombre del cliente
+                ))
                 .collect(Collectors.toList());
     }
+    public Optional<Cliente> getClientePorTelefono(String telefono) {
+        return personaRepository.findByTelefono(telefono)
+                .map(Persona::getCliente);
+    }
 
-    public Optional<List<String>> getTiendasNombres(List<Long> tiendaIds) {
-        return Optional.of(tiendaRepository.findAllById(tiendaIds).stream()
-                .map(tienda -> tienda.getCliente().getNombre())
-                .collect(Collectors.toList()));
+    // Obtener los nombres de las tiendas con sus ids
+    public List<Map<String, Object>> getTiendasNombres(List<Long> tiendaIds) {
+        return tiendaRepository.findAllById(tiendaIds).stream()
+                .map(tienda -> Map.<String, Object>of(
+                        "tienda_id", tienda.getId(),
+                        "nombre_tienda", tienda.getCliente().getNombre()  // Obtener el nombre del cliente
+                ))
+                .collect(Collectors.toList());
     }
 
     public Optional<String> getNombreTienda(Long tiendaId) {

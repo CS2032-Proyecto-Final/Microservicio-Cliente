@@ -18,7 +18,7 @@ public class CorsConfig {
                         .allowedOrigins("*") // Permitir todas las URLs
                         .allowedMethods("*") // Permitir todos los métodos HTTP (GET, POST, PUT, DELETE, etc.)
                         .allowedHeaders("*") // Permitir todos los encabezados
-                        .allowCredentials(true); // Permitir que se envíen cookies o credenciales
+                        .allowCredentials(false); // Permitir que se envíen cookies o credenciales
             }
         };
     }

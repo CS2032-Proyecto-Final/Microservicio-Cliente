@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/")
@@ -27,7 +28,6 @@ public class ClienteController {
     public ResponseEntity<?> register(@RequestBody RegisterRequestDto request) {
         try {
             Cliente cliente = clienteService.registerCliente(request);
-            // Devolver un Map con el campo id y valor Long
             return ResponseEntity.status(201).body(Map.of("id", cliente.getId()));
         } catch (RuntimeException e) {
             return ResponseEntity.status(409).body(Map.of("error", "Usuario ya registrado"));
@@ -78,16 +78,27 @@ public class ClienteController {
 
     // Obtener los nombres de las personas basadas en una lista de IDs
     @GetMapping("/personas/nombre")
-    public ResponseEntity<?> getPersonasNombres(@RequestBody List<Long> ids) {
-        return ResponseEntity.ok(clienteService.getPersonasNombres(ids));
+    public ResponseEntity<List<Map<String, Object>>> getPersonasNombres(@RequestBody List<Long> ids) {
+        List<Map<String, Object>> personasConNombre = clienteService.getPersonasNombres(ids);
+        return ResponseEntity.ok(personasConNombre);
+    }
+
+    // Obtener el ID del cliente mediante su teléfono
+    @GetMapping("/persona/telefono/{telefono}")
+    public ResponseEntity<?> getClientePorTelefono(@PathVariable String telefono) {
+        return clienteService.getClientePorTelefono(telefono)
+                .map(cliente -> ResponseEntity.ok(Map.of("id", cliente.getId())))
+                .orElse(ResponseEntity.status(400).body(Map.of("error", 400L)));
     }
 
     // Obtener los nombres de las tiendas basadas en una lista de IDs
     @GetMapping("/tiendas/nombre")
-    public ResponseEntity<List<String>> getTiendasNombres(@RequestBody List<Long> tiendaIds) {
-        return clienteService.getTiendasNombres(tiendaIds)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(404).body(new ArrayList<>()));
+    public ResponseEntity<List<Map<String, Object>>> getTiendasNombres(@RequestBody List<Long> tiendaIds) {
+        List<Map<String, Object>> tiendasConNombre = clienteService.getTiendasNombres(tiendaIds);
+        if (tiendasConNombre.isEmpty()) {
+            return ResponseEntity.status(404).body(new ArrayList<>());  // Devuelve un 404 si no hay tiendas
+        }
+        return ResponseEntity.ok(tiendasConNombre);
     }
 
     // Obtener el nombre de una tienda por su ID

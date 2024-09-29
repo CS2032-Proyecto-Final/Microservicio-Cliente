@@ -1,7 +1,7 @@
 package org.ide.microserviciocliente.repository;
 
-import org.ide.microserviciocliente.entity.Persona;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.ide.microserviciocliente.entity.Persona;
 
 import java.util.Optional;
 
