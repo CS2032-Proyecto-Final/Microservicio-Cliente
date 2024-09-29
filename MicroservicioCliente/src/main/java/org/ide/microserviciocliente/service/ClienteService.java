@@ -45,8 +45,10 @@ public class ClienteService {
 
         // Crear y asociar la cuenta a la lista de cuentas del cliente
         Cuenta cuenta = new Cuenta();
-        double saldoAleatorio = ThreadLocalRandom.current().nextDouble(100, 1000); // Saldo aleatorio
-        cuenta.setSaldo(saldoAleatorio);        cuenta.setCliente(cliente);
+        double saldoAleatorio = ThreadLocalRandom.current().nextDouble(100, 1000);
+        saldoAleatorio = Math.round(saldoAleatorio * 100.0) / 100.0;
+        cuenta.setSaldo(saldoAleatorio);
+        cuenta.setCliente(cliente);
 
         // Inicializar la lista de cuentas y agregar la cuenta creada
         cliente.setCuenta(Collections.singletonList(cuenta));
