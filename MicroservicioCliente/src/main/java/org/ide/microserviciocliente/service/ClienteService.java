@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,8 +45,8 @@ public class ClienteService {
 
         // Crear y asociar la cuenta a la lista de cuentas del cliente
         Cuenta cuenta = new Cuenta();
-        cuenta.setSaldo(0.0);
-        cuenta.setCliente(cliente);
+        double saldoAleatorio = ThreadLocalRandom.current().nextDouble(100, 1000); // Saldo aleatorio
+        cuenta.setSaldo(saldoAleatorio);        cuenta.setCliente(cliente);
 
         // Inicializar la lista de cuentas y agregar la cuenta creada
         cliente.setCuenta(Collections.singletonList(cuenta));
@@ -117,4 +118,3 @@ public class ClienteService {
     }
 }
 
-// yo lo corrijo
