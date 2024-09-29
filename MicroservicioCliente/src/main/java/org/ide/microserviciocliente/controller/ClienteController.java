@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -23,29 +24,30 @@ public class ClienteController {
 
     // Registrar un cliente nuevo
     @PostMapping("/auth/register")
-    public ResponseEntity<Long> register(@RequestBody RegisterRequestDto request) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequestDto request) {
         try {
             Cliente cliente = clienteService.registerCliente(request);
-            return ResponseEntity.status(201).body(cliente.getId());
+            // Devolver un Map con el campo id y valor Long
+            return ResponseEntity.status(201).body(Map.of("id", cliente.getId()));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(409).body(null);
+            return ResponseEntity.status(409).body(Map.of("error", "Usuario ya registrado"));
         }
     }
 
     // Iniciar sesión con número de teléfono
     @PostMapping("/auth/login")
-    public ResponseEntity<Long> login(@RequestBody LoginRequestDto request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto request) {
         return clienteService.loginCliente(request)
-                .map(cliente -> ResponseEntity.ok().body(cliente.getId()))
-                .orElse(ResponseEntity.status(400).body(null));
+                .map(cliente -> ResponseEntity.ok().body(Map.of("id", cliente.getId())))
+                .orElse(ResponseEntity.status(400).body(Map.of("error", 400L)));
     }
 
     // Obtener el saldo de una cuenta
     @GetMapping("/cuenta/{id}/saldo")
-    public ResponseEntity<Double> getSaldo(@PathVariable Long id) {
+    public ResponseEntity<?> getSaldo(@PathVariable Long id) {
         Optional<Cuenta> cuenta = clienteService.getSaldo(id);
-        return cuenta.map(c -> ResponseEntity.ok(c.getSaldo()))
-                .orElse(ResponseEntity.status(404).body(null));
+        return cuenta.map(c -> ResponseEntity.ok(Map.of("saldo", c.getSaldo())))
+                .orElse(ResponseEntity.status(404).body(Map.of("error", 404.0)));
     }
 
     // Obtener saldo del remitente
@@ -54,12 +56,12 @@ public class ClienteController {
         Optional<Cliente> remitente = clienteService.getClienteById(remitente_id);
         if (remitente.isPresent()) {
             if (!remitente.get().getCuenta().isEmpty()) {
-                return ResponseEntity.ok(remitente.get().getCuenta().get(0).getSaldo());
+                return ResponseEntity.ok(Map.of("saldo_remitente", remitente.get().getCuenta().get(0).getSaldo()));
             } else {
-                return ResponseEntity.status(404).body("El cliente no tiene cuentas asociadas");
+                return ResponseEntity.status(404).body(Map.of("error", "El cliente no tiene cuentas asociadas"));
             }
         } else {
-            return ResponseEntity.status(404).body("Usuario no encontrado");
+            return ResponseEntity.status(404).body(Map.of("error", "Usuario no encontrado"));
         }
     }
 
@@ -92,7 +94,7 @@ public class ClienteController {
     @GetMapping("/tienda/{tienda_id}/nombre")
     public ResponseEntity<?> getNombreTienda(@PathVariable Long tienda_id) {
         return clienteService.getNombreTienda(tienda_id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(404).body("Tienda no encontrada"));
+                .map(nombre -> ResponseEntity.ok(Map.of("nombre_tienda", nombre)))
+                .orElse(ResponseEntity.status(404).body(Map.of("error", "Tienda no encontrada")));
     }
 }
