@@ -51,9 +51,8 @@ public class ClienteController {
     }
 
     // Obtener saldo del remitente utilizando query parameters
-    @GetMapping("/cliente/")
-    public ResponseEntity<?> getSaldoRemitente(@RequestBody Map<String, Long> body) {
-        Long remitenteId = body.get("remitente_id");
+    @GetMapping("/cliente")
+    public ResponseEntity<?> getSaldoRemitente(@RequestParam("remitente_id") Long remitenteId) {
         Optional<Cliente> remitente = clienteService.getClienteById(remitenteId);
 
         if (remitente.isPresent()) {
@@ -66,7 +65,6 @@ public class ClienteController {
             return ResponseEntity.status(404).body(Map.of("error", "Usuario no encontrado"));
         }
     }
-
     // Transferir monto entre cuentas
     @PutMapping("/cliente/{remitente_id}/monto")
     public ResponseEntity<?> transferMonto(@PathVariable Long remitente_id, @RequestBody TransferRequestDto transferRequest) {
@@ -79,10 +77,10 @@ public class ClienteController {
     }
 
     // Obtener los nombres de las personas basadas en una lista de IDs
-    @GetMapping("/personas/nombre")
+    @PatchMapping("/personas/nombre")
     public ResponseEntity<List<Map<String, Object>>> getPersonaNombres(@RequestBody List<Map<String, Long>> request) {
         List<Long> ids = request.stream()
-                .map(map -> map.get("id"))  // Obtener el valor del campo "id"
+                .map(map -> map.get("id"))
                 .collect(Collectors.toList());
 
         List<Map<String, Object>> personasConNombre = clienteService.getPersonasNombres(ids);
@@ -98,10 +96,10 @@ public class ClienteController {
     }
 
     // Obtener los nombres de las tiendas basadas en una lista de IDs
-    @GetMapping("/tiendas/nombre")
+    @PatchMapping("/tiendas/nombre")
     public ResponseEntity<List<Map<String, Object>>> getTiendaNombres(@RequestBody List<Map<String, Long>> request) {
         List<Long> tiendaIds = request.stream()
-                .map(map -> map.get("tienda_id"))  // Obtener el valor del campo "tienda_id"
+                .map(map -> map.get("tienda_id"))
                 .collect(Collectors.toList());
 
         List<Map<String, Object>> tiendasConNombre = clienteService.getTiendasNombres(tiendaIds);
