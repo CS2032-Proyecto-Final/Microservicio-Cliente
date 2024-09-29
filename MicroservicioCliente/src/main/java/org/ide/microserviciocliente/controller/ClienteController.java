@@ -1,6 +1,7 @@
 package org.ide.microserviciocliente.controller;
 
 import org.ide.microserviciocliente.dto.LoginRequestDto;
+import org.ide.microserviciocliente.dto.PersonasIdsDto;
 import org.ide.microserviciocliente.dto.RegisterRequestDto;
 import org.ide.microserviciocliente.dto.TransferRequestDto;
 import org.ide.microserviciocliente.entity.Cliente;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,10 +50,12 @@ public class ClienteController {
                 .orElse(ResponseEntity.status(404).body(Map.of("error", 404.0)));
     }
 
-    // Obtener saldo del remitente
-    @GetMapping("/cliente")
-    public ResponseEntity<?> getSaldoRemitente(@RequestParam Long remitente_id, @RequestParam Long destinatario_id) {
-        Optional<Cliente> remitente = clienteService.getClienteById(remitente_id);
+    // Obtener saldo del remitente utilizando query parameters
+    @GetMapping("/cliente/")
+    public ResponseEntity<?> getSaldoRemitente(@RequestBody Map<String, Long> body) {
+        Long remitenteId = body.get("remitente_id");
+        Optional<Cliente> remitente = clienteService.getClienteById(remitenteId);
+
         if (remitente.isPresent()) {
             if (!remitente.get().getCuenta().isEmpty()) {
                 return ResponseEntity.ok(Map.of("saldo_remitente", remitente.get().getCuenta().get(0).getSaldo()));
@@ -66,7 +68,7 @@ public class ClienteController {
     }
 
     // Transferir monto entre cuentas
-    @PutMapping("/{remitente_id}/monto")
+    @PutMapping("/cliente/{remitente_id}/monto")
     public ResponseEntity<?> transferMonto(@PathVariable Long remitente_id, @RequestBody TransferRequestDto transferRequest) {
         try {
             clienteService.transferirMonto(remitente_id, transferRequest.getDestinatarioId(), transferRequest.getMonto());
@@ -78,7 +80,11 @@ public class ClienteController {
 
     // Obtener los nombres de las personas basadas en una lista de IDs
     @GetMapping("/personas/nombre")
-    public ResponseEntity<List<Map<String, Object>>> getPersonasNombres(@RequestBody List<Long> ids) {
+    public ResponseEntity<List<Map<String, Object>>> getPersonaNombres(@RequestBody List<Map<String, Long>> request) {
+        List<Long> ids = request.stream()
+                .map(map -> map.get("id"))  // Obtener el valor del campo "id"
+                .collect(Collectors.toList());
+
         List<Map<String, Object>> personasConNombre = clienteService.getPersonasNombres(ids);
         return ResponseEntity.ok(personasConNombre);
     }
@@ -93,11 +99,12 @@ public class ClienteController {
 
     // Obtener los nombres de las tiendas basadas en una lista de IDs
     @GetMapping("/tiendas/nombre")
-    public ResponseEntity<List<Map<String, Object>>> getTiendasNombres(@RequestBody List<Long> tiendaIds) {
+    public ResponseEntity<List<Map<String, Object>>> getTiendaNombres(@RequestBody List<Map<String, Long>> request) {
+        List<Long> tiendaIds = request.stream()
+                .map(map -> map.get("tienda_id"))  // Obtener el valor del campo "tienda_id"
+                .collect(Collectors.toList());
+
         List<Map<String, Object>> tiendasConNombre = clienteService.getTiendasNombres(tiendaIds);
-        if (tiendasConNombre.isEmpty()) {
-            return ResponseEntity.status(404).body(new ArrayList<>());  // Devuelve un 404 si no hay tiendas
-        }
         return ResponseEntity.ok(tiendasConNombre);
     }
 

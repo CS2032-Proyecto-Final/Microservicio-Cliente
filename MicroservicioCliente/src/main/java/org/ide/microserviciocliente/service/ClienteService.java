@@ -106,12 +106,16 @@ public class ClienteService {
     // Obtener los nombres de las personas con sus ids
     public List<Map<String, Object>> getPersonasNombres(List<Long> ids) {
         return personaRepository.findAllById(ids).stream()
-                .map(persona -> Map.<String, Object>of(
-                        "id", persona.getId(),
-                        "nombre_destinatario", persona.getCliente().getNombre()  // Obtener el nombre del cliente
-                ))
+                .map(persona -> {
+                    Map<String, Object> map = Map.of(
+                            "id", (Object) persona.getId(),  // Casting explícito a Object
+                            "nombre_destinatario", (Object) persona.getCliente().getNombre()  // Casting explícito a Object
+                    );
+                    return map;
+                })
                 .collect(Collectors.toList());
     }
+
     public Optional<Cliente> getClientePorTelefono(String telefono) {
         return personaRepository.findByTelefono(telefono)
                 .map(Persona::getCliente);
@@ -120,16 +124,23 @@ public class ClienteService {
     // Obtener los nombres de las tiendas con sus ids
     public List<Map<String, Object>> getTiendasNombres(List<Long> tiendaIds) {
         return tiendaRepository.findAllById(tiendaIds).stream()
-                .map(tienda -> Map.<String, Object>of(
-                        "tienda_id", tienda.getId(),
-                        "nombre_tienda", tienda.getCliente().getNombre()  // Obtener el nombre del cliente
-                ))
+                .map(tienda -> {
+                    Map<String, Object> map = Map.of(
+                            "tienda_id", (Object) tienda.getId(),  // Casting explícito a Object
+                            "nombre_tienda", (Object) tienda.getCliente().getNombre()  // Casting explícito a Object
+                    );
+                    return map;
+                })
                 .collect(Collectors.toList());
     }
 
     public Optional<String> getNombreTienda(Long tiendaId) {
         return tiendaRepository.findById(tiendaId)
                 .map(tienda -> tienda.getCliente().getNombre());
+    }
+    public Optional<String> getPersonaNombre(Long personaId) {
+        return personaRepository.findById(personaId)
+                .map(persona -> persona.getCliente().getNombre());
     }
 }
 
