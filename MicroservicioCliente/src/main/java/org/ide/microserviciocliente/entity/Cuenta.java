@@ -4,6 +4,8 @@ import lombok.Data;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Data
 public class Cuenta {
@@ -13,7 +15,7 @@ public class Cuenta {
 
     private Double saldo;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 }
