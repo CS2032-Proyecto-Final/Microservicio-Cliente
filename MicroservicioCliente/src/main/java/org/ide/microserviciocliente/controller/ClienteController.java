@@ -99,7 +99,7 @@ public class ClienteController {
     @PatchMapping("/tiendas/nombre")
     public ResponseEntity<List<Map<String, Object>>> getTiendaNombres(@RequestBody List<Map<String, Long>> request) {
         List<Long> clienteIds = request.stream()
-                .map(map -> map.get("id"))
+                .map(map -> map.get("tienda_id"))
                 .collect(Collectors.toList());
 
         List<Map<String, Object>> tiendasConNombre = clienteService.getTiendasNombresPorClienteId(clienteIds);
