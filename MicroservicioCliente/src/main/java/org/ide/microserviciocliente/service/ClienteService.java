@@ -134,9 +134,11 @@ public class ClienteService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<String> getNombreTienda(Long tiendaId) {
-        return tiendaRepository.findById(tiendaId)
-                .map(tienda -> tienda.getCliente().getNombre());
+    public String getNombreTienda(Long tiendaId) {
+        Cliente cliente = clienteRepository.findById(tiendaId).orElse(null);
+        return cliente.getNombre();
+
+
     }
     public Optional<String> getPersonaNombre(Long personaId) {
         return personaRepository.findById(personaId)

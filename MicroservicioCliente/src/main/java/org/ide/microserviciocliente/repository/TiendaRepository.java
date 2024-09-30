@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface TiendaRepository extends JpaRepository<Tienda, Long> {
     Optional<Tienda> findByCorreo(String correo);
+
+
 }

@@ -108,9 +108,7 @@ public class ClienteController {
 
     // Obtener el nombre de una tienda por su ID
     @GetMapping("/tienda/{tienda_id}/nombre")
-    public ResponseEntity<?> getNombreTienda(@PathVariable Long tienda_id) {
-        return clienteService.getNombreTienda(tienda_id)
-                .map(nombre -> ResponseEntity.ok(Map.of("nombre_tienda", nombre)))
-                .orElse(ResponseEntity.status(404).body(Map.of("error", "Tienda no encontrada")));
+    public ResponseEntity<String> getNombreTienda(@PathVariable Long tienda_id) {
+        return ResponseEntity.ok(clienteService.getNombreTienda(tienda_id));
     }
 }
