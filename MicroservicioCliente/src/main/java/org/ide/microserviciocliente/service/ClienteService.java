@@ -115,7 +115,7 @@ public class ClienteService {
                 .map(persona -> {
                     // Casting explícito a Object
                     Map<String, Object> map = Map.of(
-                            "cliente_id", (Object) persona.getCliente().getId(),
+                            "id", (Object) persona.getCliente().getId(),
                             "nombre_destinatario", (Object) persona.getCliente().getNombre()
                     );
                     return map;
@@ -135,7 +135,7 @@ public class ClienteService {
                 .map(tienda -> {
                     // Casting explícito a Object
                     Map<String, Object> map = Map.of(
-                            "cliente_id", (Object) tienda.getCliente().getId(),
+                            "tienda_id", (Object) tienda.getCliente().getId(),
                             "nombre_tienda", (Object) tienda.getCliente().getNombre()
                     );
                     return map;
