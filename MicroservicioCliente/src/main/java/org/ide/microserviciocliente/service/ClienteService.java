@@ -103,13 +103,15 @@ public class ClienteService {
         cuentaRepository.save(cuentaDestinatario);
     }
 
-    // Obtener los nombres de las personas con sus ids
-    public List<Map<String, Object>> getPersonasNombres(List<Long> ids) {
-        return personaRepository.findAllById(ids).stream()
+    // Obtener los nombres de las personas con sus cliente_ids
+    public List<Map<String, Object>> getPersonasNombresPorClienteId(List<Long> clienteIds) {
+        return personaRepository.findAll().stream()
+                .filter(persona -> clienteIds.contains(persona.getCliente().getId()))
                 .map(persona -> {
+                    // Casting explícito a Object
                     Map<String, Object> map = Map.of(
-                            "id", (Object) persona.getId(),  // Casting explícito a Object
-                            "nombre_destinatario", (Object) persona.getCliente().getNombre()  // Casting explícito a Object
+                            "cliente_id", (Object) persona.getCliente().getId(),
+                            "nombre_destinatario", (Object) persona.getCliente().getNombre()
                     );
                     return map;
                 })
@@ -121,13 +123,15 @@ public class ClienteService {
                 .map(Persona::getCliente);
     }
 
-    // Obtener los nombres de las tiendas con sus ids
-    public List<Map<String, Object>> getTiendasNombres(List<Long> tiendaIds) {
-        return tiendaRepository.findAllById(tiendaIds).stream()
+    // Obtener los nombres de las tiendas con sus cliente_ids
+    public List<Map<String, Object>> getTiendasNombresPorClienteId(List<Long> clienteIds) {
+        return tiendaRepository.findAll().stream()
+                .filter(tienda -> clienteIds.contains(tienda.getCliente().getId()))
                 .map(tienda -> {
+                    // Casting explícito a Object
                     Map<String, Object> map = Map.of(
-                            "tienda_id", (Object) tienda.getId(),  // Casting explícito a Object
-                            "nombre_tienda", (Object) tienda.getCliente().getNombre()  // Casting explícito a Object
+                            "cliente_id", (Object) tienda.getCliente().getId(),
+                            "nombre_tienda", (Object) tienda.getCliente().getNombre()
                     );
                     return map;
                 })
@@ -137,12 +141,13 @@ public class ClienteService {
     public String getNombreTienda(Long tiendaId) {
         Cliente cliente = clienteRepository.findById(tiendaId).orElse(null);
         return cliente.getNombre();
-
-
     }
-    public Optional<String> getPersonaNombre(Long personaId) {
-        return personaRepository.findById(personaId)
-                .map(persona -> persona.getCliente().getNombre());
+    public String getNombrePersona(Long clienteId) {
+        Cliente cliente = clienteRepository.findById(clienteId).orElse(null);
+        if (cliente != null) {
+            return cliente.getNombre();
+        }
+        return null;
     }
 }
 

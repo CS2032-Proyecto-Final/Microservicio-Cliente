@@ -79,11 +79,11 @@ public class ClienteController {
     // Obtener los nombres de las personas basadas en una lista de IDs
     @PatchMapping("/personas/nombre")
     public ResponseEntity<List<Map<String, Object>>> getPersonaNombres(@RequestBody List<Map<String, Long>> request) {
-        List<Long> ids = request.stream()
-                .map(map -> map.get("id"))
+        List<Long> clienteIds = request.stream()
+                .map(map -> map.get("cliente_id"))
                 .collect(Collectors.toList());
 
-        List<Map<String, Object>> personasConNombre = clienteService.getPersonasNombres(ids);
+        List<Map<String, Object>> personasConNombre = clienteService.getPersonasNombresPorClienteId(clienteIds);
         return ResponseEntity.ok(personasConNombre);
     }
 
@@ -98,11 +98,11 @@ public class ClienteController {
     // Obtener los nombres de las tiendas basadas en una lista de IDs
     @PatchMapping("/tiendas/nombre")
     public ResponseEntity<List<Map<String, Object>>> getTiendaNombres(@RequestBody List<Map<String, Long>> request) {
-        List<Long> tiendaIds = request.stream()
-                .map(map -> map.get("tienda_id"))
+        List<Long> clienteIds = request.stream()
+                .map(map -> map.get("cliente_id"))
                 .collect(Collectors.toList());
 
-        List<Map<String, Object>> tiendasConNombre = clienteService.getTiendasNombres(tiendaIds);
+        List<Map<String, Object>> tiendasConNombre = clienteService.getTiendasNombresPorClienteId(clienteIds);
         return ResponseEntity.ok(tiendasConNombre);
     }
 
@@ -110,5 +110,15 @@ public class ClienteController {
     @GetMapping("/tienda/{tienda_id}/nombre")
     public ResponseEntity<String> getNombreTienda(@PathVariable Long tienda_id) {
         return ResponseEntity.ok(clienteService.getNombreTienda(tienda_id));
+    }
+
+    @GetMapping("/persona/{cliente_id}/nombre")
+    public ResponseEntity<String> getNombrePersona(@PathVariable Long cliente_id) {
+        String nombre = clienteService.getNombrePersona(cliente_id);
+        if (nombre != null) {
+            return ResponseEntity.ok(nombre);
+        } else {
+            return ResponseEntity.status(404).body("Persona no encontrada");
+        }
     }
 }
