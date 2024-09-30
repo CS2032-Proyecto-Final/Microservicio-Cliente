@@ -83,10 +83,17 @@ public class ClienteService {
         Cliente remitente = clienteRepository.findById(remitente_id)
                 .orElseThrow(() -> new RuntimeException("Remitente no encontrado"));
 
+        if (remitente.getCuenta() == null || remitente.getCuenta().isEmpty()) {
+            throw new RuntimeException("El remitente no tiene una cuenta asociada");
+        }
+
         Cliente destinatario = clienteRepository.findById(destinatario_id)
                 .orElseThrow(() -> new RuntimeException("Destinatario no encontrado"));
 
-        // Supongamos que cada cliente solo tiene una cuenta para simplificar
+        if (destinatario.getCuenta() == null || destinatario.getCuenta().isEmpty()) {
+            throw new RuntimeException("El destinatario no tiene una cuenta asociada");
+        }
+
         Cuenta cuentaRemitente = remitente.getCuenta().get(0);
         Cuenta cuentaDestinatario = destinatario.getCuenta().get(0);
 
@@ -94,11 +101,9 @@ public class ClienteService {
             throw new RuntimeException("Saldo insuficiente");
         }
 
-        // Ajustar los saldos de ambas cuentas
         cuentaRemitente.setSaldo(cuentaRemitente.getSaldo() - monto);
         cuentaDestinatario.setSaldo(cuentaDestinatario.getSaldo() + monto);
 
-        // Guardar los cambios
         cuentaRepository.save(cuentaRemitente);
         cuentaRepository.save(cuentaDestinatario);
     }
