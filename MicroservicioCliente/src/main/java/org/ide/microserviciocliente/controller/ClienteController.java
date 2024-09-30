@@ -80,7 +80,7 @@ public class ClienteController {
     @PatchMapping("/personas/nombre")
     public ResponseEntity<List<Map<String, Object>>> getPersonaNombres(@RequestBody List<Map<String, Long>> request) {
         List<Long> clienteIds = request.stream()
-                .map(map -> map.get("cliente_id"))
+                .map(map -> map.get("id"))
                 .collect(Collectors.toList());
 
         List<Map<String, Object>> personasConNombre = clienteService.getPersonasNombresPorClienteId(clienteIds);
@@ -99,7 +99,7 @@ public class ClienteController {
     @PatchMapping("/tiendas/nombre")
     public ResponseEntity<List<Map<String, Object>>> getTiendaNombres(@RequestBody List<Map<String, Long>> request) {
         List<Long> clienteIds = request.stream()
-                .map(map -> map.get("cliente_id"))
+                .map(map -> map.get("id"))
                 .collect(Collectors.toList());
 
         List<Map<String, Object>> tiendasConNombre = clienteService.getTiendasNombresPorClienteId(clienteIds);
