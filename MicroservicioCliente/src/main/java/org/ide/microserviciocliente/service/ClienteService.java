@@ -72,7 +72,7 @@ public class ClienteService {
     }
 
     public Optional<Cuenta> getSaldo(Long id) {
-        return cuentaRepository.findById(id);
+        return cuentaRepository.findByClienteId(id);
     }
 
     public Optional<Cliente> getClienteById(Long id) {
