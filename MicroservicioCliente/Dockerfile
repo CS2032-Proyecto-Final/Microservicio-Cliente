@@ -5,12 +5,12 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
 # Copia los archivos de Maven y el proyecto al contenedor
-COPY . .
+COPY target/MicroservicioCliente-0.0.1-SNAPSHOT.jar /app/MicroservicioCliente.jar
 
 # Exponer el puerto que la app utiliza
 EXPOSE 8080
 
-# Ejecuta la aplicación usando Maven con Spring Boot
-CMD ["mvn", "spring-boot:run"]
+# Ejecuta el ejecutable .jar
+ENTRYPOINT ["java", "-jar", "/app/MicroservicioCliente.jar"]
 
 
