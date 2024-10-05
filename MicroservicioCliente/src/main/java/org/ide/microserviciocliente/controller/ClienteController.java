@@ -125,7 +125,7 @@ public class ClienteController {
         }
     }
 
-    @GetMapping("./")
+    @GetMapping("/")
     public ResponseEntity<String> checkConnection() {
         return ResponseEntity.ok("Conexion correcta");
     }
