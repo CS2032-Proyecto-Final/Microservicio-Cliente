@@ -1,5 +1,5 @@
-# Usa una imagen de Maven para construir y ejecutar el proyecto
-FROM maven:3.8.6-openjdk-17
+# Usa una imagen de Maven con OpenJDK 17
+FROM openjdk:17-jdk-alpine
 
 # Establece el directorio de trabajo en /app
 WORKDIR /app
@@ -12,3 +12,5 @@ EXPOSE 8080
 
 # Ejecuta la aplicación usando Maven con Spring Boot
 CMD ["mvn", "spring-boot:run"]
+
+
