@@ -110,16 +110,11 @@ public class ClienteService {
 
     // Obtener los nombres de las personas con sus cliente_ids
     public List<Map<String, Object>> getPersonasNombresPorClienteId(List<Long> clienteIds) {
-        return personaRepository.findAll().stream()
-                .filter(persona -> clienteIds.contains(persona.getCliente().getId()))
-                .map(persona -> {
-                    // Casting explícito a Object
-                    Map<String, Object> map = Map.of(
-                            "id", (Object) persona.getCliente().getId(),
-                            "nombre_destinatario", (Object) persona.getCliente().getNombre()
-                    );
-                    return map;
-                })
+        return personaRepository.findClienteIdAndNombreByClienteIdIn(clienteIds).stream()
+                .map(result -> Map.of(
+                        "id", result[0],
+                        "nombre_destinatario", result[1]
+                ))
                 .collect(Collectors.toList());
     }
 
