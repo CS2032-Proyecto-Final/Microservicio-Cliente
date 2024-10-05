@@ -124,4 +124,9 @@ public class ClienteController {
             return ResponseEntity.status(404).body("Persona no encontrada");
         }
     }
+
+    @GetMapping("./")
+    public ResponseEntity<String> checkConnection() {
+        return ResponseEntity.ok("Conexion correcta");
+    }
 }
